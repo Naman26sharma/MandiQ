@@ -284,6 +284,13 @@ def _records_to_df(data: List[Dict]) -> pd.DataFrame:
     df["modal_price"] = pd.to_numeric(df["modal_price"], errors="coerce")
     if "arrival_qty" in df.columns:
         df["arrival_qty"] = pd.to_numeric(df["arrival_qty"], errors="coerce")
+    
+    # Weather + region columns numeric karo
+    for col in ["delhi_temp_max","delhi_temp_min","delhi_rainfall","delhi_humidity",
+                "region_temp_max","region_temp_min","region_rainfall","region_humidity"]:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+    
     df = df.dropna(subset=["date", "modal_price"])
     df = df.sort_values("date").drop_duplicates(subset=["date"])
     return df

@@ -1,6 +1,8 @@
 from pathlib import Path
+from contextlib import asynccontextmanager
 import logging
 import uvicorn
+import sys
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,6 +14,8 @@ from csv_parser import parse_mandi_csv
 from model_trainer import MandiModelTrainer, safe_format
 from predictor import MandiPredictor
 from database import MandiDB
+
+
 
 # ─── Paths ─────────────────────────────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent
@@ -25,11 +29,18 @@ logging.basicConfig(
 )
 log = logging.getLogger("mandiq")
 
+@asynccontextmanager
+async def lifespan(app):
+    import subprocess
+    log.info("Running pipeline on startup...")
+    subprocess.Popen([sys.executable, "run_pipeline.py", "--crop", "all"], cwd=str(BASE_DIR))
+    yield
 # ─── App ───────────────────────────────────────────────────────────────────────
 app = FastAPI(
     title="MandiQ API",
-    description="Agricultural mandi price prediction backend — upload PDFs, train models, get forecasts",
+    description="Agricultural mandi price prediction backend",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -266,6 +277,6 @@ def delete_data(commodity: str, market: str = "Azadpur APMC"):
     db.delete_data(commodity=commodity, market=market)
     return {"status": "deleted", "commodity": commodity, "market": market}
 
-
+    
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
