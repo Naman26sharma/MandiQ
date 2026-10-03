@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router';
-import { Home, TrendingUp, Bell, User } from 'lucide-react';
+import { Home, BadgeDollarSign, Bell, User } from 'lucide-react';
 import { useT } from '../../i18n';
 
 export function BottomNav() {
@@ -8,10 +8,10 @@ export function BottomNav() {
   const { t } = useT();
 
   const tabs = [
-    { path: '/home',       icon: Home,       label: t('nav.home'),    emoji: '🏠' },
-    { path: '/prediction', icon: TrendingUp,  label: t('nav.predict'), emoji: '📈' },
-    { path: '/alerts',     icon: Bell,        label: t('nav.alerts'),  emoji: '🔔' },
-    { path: '/profile',    icon: User,        label: t('nav.profile'), emoji: '👤' },
+    { path: '/home',       icon: Home,            label: t('nav.home'),       emoji: '🏠' },
+    { path: '/smart-sell', icon: BadgeDollarSign, label: t('nav.smart_sell'), emoji: '💰' },
+    { path: '/alerts',     icon: Bell,            label: t('nav.alerts'),     emoji: '🔔' },
+    { path: '/profile',    icon: User,            label: t('nav.profile'),    emoji: '👤' },
   ];
 
   return (
@@ -19,7 +19,7 @@ export function BottomNav() {
       <div className="flex items-center justify-around px-2 py-2">
         {tabs.map((tab) => {
           const Icon = tab.icon;
-          const isActive = location.pathname === tab.path;
+          const isActive = location.pathname === tab.path || (tab.path === '/smart-sell' && location.pathname === '/prediction');
           return (
             <button
               key={tab.path}

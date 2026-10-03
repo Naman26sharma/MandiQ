@@ -5,6 +5,7 @@ import { OtpScreen } from "./screens/OtpScreen";
 import { HomeScreen } from "./screens/HomeScreen";
 import { CropBrowseScreen } from "./screens/CropBrowseScreen";
 import { PredictionScreen } from "./screens/PredictionScreen";
+import { SmartSellScreen } from "./screens/SmartSellScreen";
 import { MandiCompareScreen } from "./screens/MandiCompareScreen";
 import { MandiInfoScreen } from "./screens/MandiInfoScreen";
 import { AlertsScreen } from "./screens/AlertsScreen";
@@ -31,7 +32,8 @@ export const router = createBrowserRouter([
   // Protected Main App Routes
   { path: "/home", Component: () => <ProtectedRoute><HomeScreen /></ProtectedRoute> },
   { path: "/crops", Component: () => <ProtectedRoute><CropBrowseScreen /></ProtectedRoute> },
-  { path: "/prediction", Component: () => <ProtectedRoute><PredictionScreen /></ProtectedRoute> },
+  { path: "/smart-sell", Component: () => <ProtectedRoute><SmartSellScreen /></ProtectedRoute> },
+  { path: "/prediction", Component: () => <ProtectedRoute><SmartSellScreen /></ProtectedRoute> },
   { path: "/compare", Component: () => <ProtectedRoute><MandiCompareScreen /></ProtectedRoute> },
   { path: "/mandi-info", Component: () => <ProtectedRoute><MandiInfoScreen /></ProtectedRoute> },
   { path: "/alerts", Component: () => <ProtectedRoute><AlertsScreen /></ProtectedRoute> },

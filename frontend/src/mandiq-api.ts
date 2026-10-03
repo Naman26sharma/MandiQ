@@ -259,6 +259,71 @@ export const mandiApi = {
 
   /** Fetch current logged-in user profile */
   me: () => request<any>("/api/auth/me"),
+
+  /** Calculate smart sell net realization */
+  calculateSmartSell: (params: {
+    quantityKg: number;
+    pricePerKg: number;
+    distanceKm?: number;
+  }) => {
+    const { quantityKg, pricePerKg, distanceKm = 50 } = params;
+    const gross = Math.round(quantityKg * pricePerKg);
+    const quintals = quantityKg / 100;
+
+    // Mandi route costs
+    const transport = Math.round(Math.max(400, distanceKm * 16));
+    const loading = Math.round(quintals * 40);
+    const packaging = Math.round(quintals * 50);
+    const mandiCess = Math.round(gross * 0.015);
+    const totalCosts = transport + loading + packaging + mandiCess;
+    const mandiNet = Math.max(0, gross - totalCosts);
+    const mandiPerKg = Number((mandiNet / (quantityKg || 1)).toFixed(2));
+
+    // MandiQ direct farmgate route (₹0 transport, ₹0 mandi cess)
+    const mandiqNet = gross;
+    const mandiqPerKg = pricePerKg;
+    const diff = mandiqNet - mandiNet;
+    const diffPct = mandiNet > 0 ? Number(((diff / mandiNet) * 100).toFixed(1)) : 0;
+
+    return {
+      quantityKg,
+      expectedPricePerKg: pricePerKg,
+      grossSaleValue: gross,
+      mandiCosts: { transport, loading, packaging, mandiCess, totalCosts },
+      mandiNetRealization: mandiNet,
+      mandiPerKg,
+      mandiqNetRealization: mandiqNet,
+      mandiqPerKg,
+      difference: diff,
+      differencePct: diffPct,
+    };
+  },
+
+  /** Get active institutional buyer demands */
+  getBuyerDemands: (crop: string) => {
+    const list: Record<string, any[]> = {
+      Tomato: [
+        { id: 'b1', buyerName: 'Safal / Mother Dairy', crop: 'Tomato', grade: 'Grade A', quantityRequiredTonnes: 50, priceRange: '₹25 – ₹27/kg', location: 'Delhi NCR Hub', verified: true, paymentTerms: 'T+1 Bank Transfer' },
+        { id: 'b2', buyerName: 'Reliance Fresh Aggregator', crop: 'Tomato', grade: 'Grade A & B', quantityRequiredTonnes: 35, priceRange: '₹24 – ₹26/kg', location: 'Sonipat Cluster', verified: true, paymentTerms: 'Immediate UPI' },
+        { id: 'b3', buyerName: 'Keventer Agro Processing', crop: 'Tomato', grade: 'Grade B & C', quantityRequiredTonnes: 80, priceRange: '₹22 – ₹24/kg', location: 'Kundli Food Park', verified: true, paymentTerms: 'Cash on Pickup' },
+      ],
+      Potato: [
+        { id: 'b4', buyerName: 'Haldiram Snacks Procurement', crop: 'Potato', grade: 'Grade A (Chips quality)', quantityRequiredTonnes: 120, priceRange: '₹18 – ₹21/kg', location: 'Noida Hub', verified: true, paymentTerms: 'Instant Account Credit' },
+        { id: 'b5', buyerName: 'Blinkit Local Sourcing', crop: 'Potato', grade: 'Grade A & B', quantityRequiredTonnes: 40, priceRange: '₹17 – ₹19/kg', location: 'Gurugram DC', verified: true, paymentTerms: 'T+24h Bank Transfer' },
+      ],
+      Onion: [
+        { id: 'b6', buyerName: 'BigBasket Fresh Depot', crop: 'Onion', grade: 'Grade A (Dry, 50mm+)', quantityRequiredTonnes: 60, priceRange: '₹28 – ₹32/kg', location: 'Delhi Alipur DC', verified: true, paymentTerms: 'Direct Deposit' },
+        { id: 'b7', buyerName: 'Zomato Hyperpure', crop: 'Onion', grade: 'Grade A & B', quantityRequiredTonnes: 45, priceRange: '₹27 – ₹30/kg', location: 'Okhla Mandi Hub', verified: true, paymentTerms: 'Instant Payment' },
+      ],
+      Spinach: [
+        { id: 'b8', buyerName: 'Country Delight Greens', crop: 'Spinach', grade: 'Grade A Fresh Cut', quantityRequiredTonnes: 15, priceRange: '₹18 – ₹22/kg', location: 'Delhi NCR Daily', verified: true, paymentTerms: 'Daily Direct Transfer' },
+      ],
+    };
+    return list[crop] || [
+      { id: 'b_def', buyerName: 'Regional Agri-Retail Consortium', crop, grade: 'Grade A', quantityRequiredTonnes: 25, priceRange: 'Mandi-Linked Fair Price', location: 'Regional Hub', verified: true, paymentTerms: 'Same-day Settlement' },
+    ];
+  },
 };
 
 export default mandiApi;
+

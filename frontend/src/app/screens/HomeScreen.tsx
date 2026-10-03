@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { ChevronDown, TrendingUp, TrendingDown, Info, Bell, Sparkles, BarChart3, Building2, Loader2, Check, Search, Star, Minus, ChevronUp, Navigation, MapPin } from 'lucide-react';
+import { ChevronDown, TrendingUp, TrendingDown, Info, Bell, Sparkles, BarChart3, Building2, Loader2, Check, Search, Star, Minus, ChevronUp, Navigation, MapPin, BadgePercent } from 'lucide-react';
 import { BottomNav } from '../components/BottomNav';
 import { SupportChat } from '../components/SupportChat';
 import { SkeletonPriceCard, SkeletonAdviceCard } from '../components/Skeleton';
@@ -839,7 +839,7 @@ export function HomeScreen() {
                     <span className="text-2xl">🤖</span>
                     <p className="font-semibold text-gray-800 text-sm">{t('advice.label')}</p>
                   </div>
-                  <button onClick={() => navigate('/prediction')} className="text-xs text-[#2d6a3e] flex items-center gap-1 font-medium">
+                  <button onClick={() => navigate('/smart-sell')} className="text-xs text-[#2d6a3e] flex items-center gap-1 font-medium">
                     {t('home.viewBtn')} <Info className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -879,6 +879,30 @@ export function HomeScreen() {
               </div>
             );
           })()}
+
+          {/* SMART SELL HERO CARD */}
+          <button
+            onClick={() => navigate('/smart-sell')}
+            className="w-full bg-gradient-to-r from-[#1b4324] via-[#24572e] to-[#1b4324] rounded-2xl p-4 text-white shadow-md flex items-center justify-between gap-3 text-left hover:brightness-105 active:scale-[0.99] transition-all"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-xl bg-amber-400/20 border border-amber-400/30 flex items-center justify-center shrink-0">
+                <BadgePercent className="w-6 h-6 text-amber-400" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-white">MandiQ Smart Sell</span>
+                  <span className="bg-amber-400 text-amber-950 font-extrabold text-[9px] px-1.5 py-0.2 rounded-full uppercase">
+                    New
+                  </span>
+                </div>
+                <p className="text-xs text-emerald-100 mt-0.5">
+                  मंडी vs खेत से बिक्री का शुद्ध मुनाफा (Net Realization) जानें
+                </p>
+              </div>
+            </div>
+            <span className="text-xs font-bold text-amber-300 shrink-0">जाँचें →</span>
+          </button>
 
           {/* CHART TOGGLE */}
           <ChartSection forecastOnly={forecastOnly} t={t} />
